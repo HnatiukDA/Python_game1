@@ -17,8 +17,8 @@ PLAYER_COLOR_PALETTE = [(255, 0, 0), (255, 165, 0), (255, 255, 0),
 
 main_dysplay = pygame.display.set_mode((WIDTH, HEIGHT))
 
-player_w = 40
-player_h = 40
+player_w = 20
+player_h = 20
 player = pygame.Surface((player_w, player_h))
 
 # Get random position
@@ -31,8 +31,8 @@ player.fill(COLOR_WHITE)
 player_rect = pygame.Rect(random_x, random_y, player_w, player_h)
 
 # Set initial random speed
-random_speed_x = random.choice([-2, -1, 1, 2])
-random_speed_y = random.choice([-2, -1, 1, 2])
+random_speed_x = random.choice([-1, 1])
+random_speed_y = random.choice([-1, 1])
 
 player_speed = [random_speed_x, random_speed_y]
 
