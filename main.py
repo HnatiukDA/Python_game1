@@ -4,46 +4,47 @@ import random
 
 pygame.init()
 
+# Consts
 FPS = pygame.time.Clock()
 
 HEIGHT = 800
 WIDTH = 1200
 
-COLOR_WHITE = (255, 255, 255)
-COLOR_BLACK = (0, 0, 0)
-BLINK = (10, 10, 10)
-PLAYER_COLOR_PALETTE = [(255, 0, 0), (255, 165, 0), (255, 255, 0),
-                        (0, 128, 0), (0, 0, 255), (75, 0, 130), (238, 130, 238)]
+# Colors
+COLOR_WHITE = ('#ffffff')
+COLOR_BLACK = ('#000000')
+COLOR_RED = ('#ff0000')
+COLOR_GREEN = ('#00ff00')
+COLOR_NET = ('#aaccaa')
+
 
 main_dysplay = pygame.display.set_mode((WIDTH, HEIGHT))
 
-player_w = 20
-player_h = 20
-player = pygame.Surface((player_w, player_h))
+net_size = (WIDTH/80, 300)
+net_position = (main_dysplay.get_width()/2, HEIGHT)
+net = pygame.Surface(net_size)
+net.fill(COLOR_NET)
+net_rect = pygame.Rect(*net_position, *net_size)
 
-# Get random position
-random_x = random.randint(1, WIDTH - 1)
-random_y = random.randint(1, HEIGHT - 1)
+# Functions
 
-player.fill(COLOR_WHITE)
 
-# Set player_rect
-player_rect = pygame.Rect(random_x, random_y, player_w, player_h)
+def create_ball():
+    ball_size = (30, 30)
+    ball_position = (WIDTH/2, random.randint(100, HEIGHT - 100))
+    ball = pygame.Surface(ball_size)
+    ball.fill(COLOR_WHITE)
+    ball_rect = pygame.Rect(*ball_position, *ball_size)
+    ball_speed = [random.choice([-1, 1]), random.choice([-1, 1])]
+    return [ball, ball_rect, ball_speed]
 
-# Set initial random speed
-random_speed_x = random.choice([-1, 1])
-random_speed_y = random.choice([-1, 1])
 
-player_speed = [random_speed_x, random_speed_y]
+CREATE_BALL = pygame.USEREVENT + 1
+balls = []
 
-random_palette_color = 0
-
-def set_random_color():
-    random_palette_color = (random.randint(0, len(PLAYER_COLOR_PALETTE) - 1))
-    player.fill(PLAYER_COLOR_PALETTE[random_palette_color])
 
 while True:
-    FPS.tick(120)
+    FPS.tick(360)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -52,32 +53,38 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
+        if event.type == CREATE_BALL:
+            print()
 
     main_dysplay.fill(COLOR_BLACK)
-    
-    
-    if player_rect.bottom >= HEIGHT:
-        player_speed[1] *= -1
-        set_random_color()
-        main_dysplay.fill(BLINK)
 
-    if player_rect.top <= 0:
-        player_speed[1] *= -1
-        set_random_color()
-        main_dysplay.fill(BLINK)
+    if len(balls) == 0:
+        balls.append(create_ball())
 
-    if player_rect.right >= WIDTH:
-        player_speed[0] *= -1
-        set_random_color()
-        main_dysplay.fill(BLINK)
+    for ball in balls:
+        if ball[1].top <= 0:
+            ball[2][1] *= -1
 
-    if player_rect.left <= 0:
-        player_speed[0] *= -1
-        set_random_color()
-        main_dysplay.fill(BLINK)
+        if ball[1].bottom >= HEIGHT:
+            ball[2][1] *= -1
 
-    main_dysplay.blit(player, player_rect)
+        # if ball[1].right >= WIDTH:
+        #     ball[2][0] *= -1
 
-    player_rect = player_rect.move(player_speed)
+        # if ball[1].left <= 0:
+        #     ball[2][0] *= -1
+
+    for ball in balls:
+        ball[1] = ball[1].move(ball[2])
+        main_dysplay.blit(ball[0], ball[1])
 
     pygame.display.flip()
+
+    for ball in balls:
+        if ball[1].right < 0:
+            balls.pop(balls.index(ball))
+        if ball[1].left > WIDTH:
+            balls.pop(balls.index(ball))
+        if ball[1].top > HEIGHT:
+            balls.pop(balls.index(ball))
+    print(len(balls))
