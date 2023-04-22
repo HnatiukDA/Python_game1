@@ -27,8 +27,8 @@ net.fill(COLOR_NET)
 net_rect = pygame.Rect(*net_position, *net_size)
 
 # Controls
-player_move_up = (0, -1)
-player_move_down = (0, 1)
+player_move_up = (0, -4)
+player_move_down = (0, 4)
 
 # Functions
 
@@ -39,7 +39,7 @@ def create_ball():
     ball = pygame.Surface(ball_size)
     ball.fill(COLOR_WHITE)
     ball_rect = pygame.Rect(*ball_position, *ball_size)
-    ball_speed = [random.choice([-1, 1]), random.choice([-1, 1])]
+    ball_speed = [random.choice([-4, 4]), random.choice([-4, 4])]
     return [ball, ball_rect, ball_speed]
 
 
@@ -60,7 +60,7 @@ CREATE_PLAYER = pygame.USEREVENT + 2
 players = []
 
 while True:
-    FPS.tick(360)
+    FPS.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -88,14 +88,21 @@ while True:
 
         if ball[1].right >= WIDTH:
             ball[2][0] *= -1
-            
-        for player in players: 
+
+        for player in players:
             player_right = player[1].right
             player_top = player[1].top
             player_bottom = player[1].bottom
-            
+            if keys[K_w]:
+                add_ball_speed = 1
+            elif keys[K_s]:
+                add_ball_speed = -1
+            else:
+                add_ball_speed = 0
+
         if ball[1].left <= player_right and ball[1].bottom > player_top and ball[1].top < player_bottom:
             ball[2][0] *= -1
+            ball[2][1] += add_ball_speed
 
         # if ball[1].left <= 0:
         #     ball[2][0] *= -1
