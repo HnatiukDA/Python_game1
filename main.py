@@ -104,9 +104,6 @@ while True:
             ball[2][0] *= -1
             ball[2][1] += add_ball_speed
 
-        # if ball[1].left <= 0:
-        #     ball[2][0] *= -1
-
     for ball in balls:
         ball[1] = ball[1].move(ball[2])
         main_dysplay.blit(ball[0], ball[1])
@@ -130,4 +127,3 @@ while True:
             balls.pop(balls.index(ball))
             for player in players:
                 players.pop(players.index(player))
-    print(len(balls))
